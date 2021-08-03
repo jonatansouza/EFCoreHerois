@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EFCore.Domain {
     public class HeroiBatalha {
-        public int HeroId { get; set; }
+        public int HeroiId { get; set; }
         public Heroi Heroi { get; set; }
 
         public int BatalhaId { get; set; }

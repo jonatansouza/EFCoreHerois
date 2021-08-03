@@ -13,34 +13,34 @@ using System.Threading.Tasks;
 namespace EFCore.WebAPI.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class HeroisController : Controller {
+    public class BatalhasController : Controller {
         public HeroiContext _context { get; set; }
-        public HeroisController(HeroiContext context) {
+        public BatalhasController(HeroiContext context) {
             _context = context;
         }
         [HttpGet]
         public ActionResult GetAll() {
             try {
-                var herois = _context.Herois.ToList();
-                return Ok(herois);
+                var batalhas = _context.Batalhas.ToList();
+                return Ok(batalhas);
             } catch(ArgumentException e) {
                 return BadRequest(e);
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetBatalha")]
         public ActionResult Get(int id) {
             try {
-                var heroi = _context.Herois.Where(h => h.Id == id).FirstOrDefault();
-                return Ok(heroi);
+                var batalha = _context.Batalhas.Where(b => b.Id == id).FirstOrDefault();
+                return Ok(batalha);
             } catch(ArgumentException e) {
                 return BadRequest(e);
             }
         }
         [HttpPost]
-        public ActionResult Post([FromBody] Heroi model) {
+        public ActionResult Post([FromBody] Batalha model) {
             try {
-                _context.Herois.Add(model);
+                _context.Batalhas.Add(model);
                 _context.SaveChanges();
                 return Ok(model);
             }catch(ArgumentException e) {
@@ -49,12 +49,12 @@ namespace EFCore.WebAPI.Controllers {
 
         }
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Heroi model) {
+        public ActionResult Put(int id, Batalha model) {
             try {
-                if (_context.Herois.AsNoTracking().FirstOrDefault(h => h.Id == id) == null) {
+                if(_context.Batalhas.AsNoTracking().FirstOrDefault(b => b.Id == id) == null) {
                     return NotFound();
                 }
-                _context.Herois.Update(model);
+                _context.Batalhas.Update(model);
                 _context.SaveChanges();
                 return Ok(model);
             } catch (ArgumentException e) {
@@ -65,8 +65,8 @@ namespace EFCore.WebAPI.Controllers {
         [HttpDelete("{id}")]
         public ActionResult Delete(int id) {
             try {
-                var heroi = _context.Herois.Where(h => h.Id == id).Single();
-                _context.Herois.Remove(heroi);
+                var batalha = _context.Batalhas.Where(hero => hero.Id == id).Single();
+                _context.Batalhas.Remove(batalha);
                 _context.SaveChanges();
                 return NoContent();
             } catch(ArgumentException e) {

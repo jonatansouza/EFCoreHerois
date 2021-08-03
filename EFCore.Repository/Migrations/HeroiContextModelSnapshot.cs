@@ -55,7 +55,7 @@ namespace EFCore.Repository.Migrations
                     b.Property<DateTime>("DtInicio")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Nome")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -83,13 +83,10 @@ namespace EFCore.Repository.Migrations
                     b.Property<int>("BatalhaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HeroId")
+                    b.Property<int>("HeroiId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("HeroiId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BatalhaId", "HeroId");
+                    b.HasKey("BatalhaId", "HeroiId");
 
                     b.HasIndex("HeroiId");
 
@@ -131,14 +128,16 @@ namespace EFCore.Repository.Migrations
             modelBuilder.Entity("EFCore.Domain.HeroiBatalha", b =>
                 {
                     b.HasOne("EFCore.Domain.Batalha", "Batalha")
-                        .WithMany()
+                        .WithMany("HeroisBatalhas")
                         .HasForeignKey("BatalhaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EFCore.Domain.Heroi", "Heroi")
                         .WithMany("HeroisBatalhas")
-                        .HasForeignKey("HeroiId");
+                        .HasForeignKey("HeroiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Batalha");
 
@@ -154,6 +153,11 @@ namespace EFCore.Repository.Migrations
                         .IsRequired();
 
                     b.Navigation("Heroi");
+                });
+
+            modelBuilder.Entity("EFCore.Domain.Batalha", b =>
+                {
+                    b.Navigation("HeroisBatalhas");
                 });
 
             modelBuilder.Entity("EFCore.Domain.Heroi", b =>

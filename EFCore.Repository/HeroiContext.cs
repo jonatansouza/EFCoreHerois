@@ -19,7 +19,7 @@ namespace EFCore.Repository {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<HeroiBatalha>(entity => {
-                entity.HasKey(item => new { item.BatalhaId, item.HeroId });
+                entity.HasKey(item => new { item.BatalhaId, item.HeroiId });
             });
         }
 

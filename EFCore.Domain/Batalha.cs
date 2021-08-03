@@ -7,12 +7,14 @@ namespace EFCore.Domain {
     public class Batalha {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string Nome { get; set; }
 
         public string Descricao { get; set; }
 
         public DateTime DtInicio { get; set; }
 
         public DateTime DtFim { get; set; }
+
+        public IEnumerable<HeroiBatalha> HeroisBatalhas { get; set; }
     }
 }
