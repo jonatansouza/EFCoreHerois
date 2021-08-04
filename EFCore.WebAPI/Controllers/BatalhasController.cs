@@ -1,5 +1,6 @@
 ﻿using EFCore.Domain;
 using EFCore.Repository;
+using EFCore.Repository.Interfaces;
 using EFCore.WebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,62 +15,79 @@ namespace EFCore.WebAPI.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class BatalhasController : Controller {
-        public HeroiContext _context { get; set; }
-        public BatalhasController(HeroiContext context) {
-            _context = context;
+        private readonly IEFCoreRepository _repo;
+
+        public BatalhasController(IEFCoreRepository repo) {
+            _repo = repo;
         }
         [HttpGet]
-        public ActionResult GetAll() {
+        public async Task<IActionResult> GetAll() {
             try {
-                var batalhas = _context.Batalhas.ToList();
+                var batalhas = await _repo.GetAllBatalhas(true);
                 return Ok(batalhas);
-            } catch(ArgumentException e) {
+            } catch (ArgumentException e) {
                 return BadRequest(e);
             }
         }
 
         [HttpGet("{id}", Name = "GetBatalha")]
-        public ActionResult Get(int id) {
+        public async Task<IActionResult> Get(int id) {
             try {
-                var batalha = _context.Batalhas.Where(b => b.Id == id).FirstOrDefault();
-                return Ok(batalha);
-            } catch(ArgumentException e) {
+                var herois = await _repo.GetBatalhaById(id, true);
+
+                return Ok(herois);
+            } catch (ArgumentException e) {
                 return BadRequest(e);
             }
         }
         [HttpPost]
-        public ActionResult Post([FromBody] Batalha model) {
+        public async Task<IActionResult> Post([FromBody] Batalha model) {
             try {
-                _context.Batalhas.Add(model);
-                _context.SaveChanges();
-                return Ok(model);
-            }catch(ArgumentException e) {
+                _repo.Add(model);
+
+                if (await _repo.SaveChangeAsync()) {
+                    return Ok("BAZINGA");
+                }
+                return BadRequest();
+            } catch (ArgumentException e) {
                 return BadRequest(e);
             }
 
         }
         [HttpPut("{id}")]
-        public ActionResult Put(int id, Batalha model) {
+        public async Task<IActionResult> Put(int id, Batalha model) {
             try {
-                if(_context.Batalhas.AsNoTracking().FirstOrDefault(b => b.Id == id) == null) {
+                var batalha = await _repo.GetBatalhaById(id);
+                if (batalha == null) {
                     return NotFound();
                 }
-                _context.Batalhas.Update(model);
-                _context.SaveChanges();
-                return Ok(model);
+                _repo.Update(model);
+
+                if (await _repo.SaveChangeAsync()) {
+                    return Ok("BAZINGA");
+                }
+                return BadRequest();
+
             } catch (ArgumentException e) {
                 return BadRequest(e);
             }
 
         }
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id) {
+        public async Task<IActionResult> Delete(int id) {
             try {
-                var batalha = _context.Batalhas.Where(hero => hero.Id == id).Single();
-                _context.Batalhas.Remove(batalha);
-                _context.SaveChanges();
-                return NoContent();
-            } catch(ArgumentException e) {
+                var heroi = await _repo.GetBatalhaById(id);
+                if (heroi == null) {
+                    return NotFound();
+                }
+                _repo.Delete(heroi);
+
+                if (await _repo.SaveChangeAsync()) {
+
+                    return Ok("BAZINGA");
+                }
+                return BadRequest();
+            } catch (ArgumentException e) {
                 return BadRequest(e);
             }
         }
