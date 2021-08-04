@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Models;
 
 namespace EFCore.WebAPI {
     public class Startup {
@@ -27,6 +28,18 @@ namespace EFCore.WebAPI {
             });
             services.AddScoped<IEFCoreRepository, EFCoreRepository>();
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo {
+                    Title = "ASPNETCORE 3.1 - 2021",
+                    Version = "v1",
+                    Description = "Hero API",
+                    Contact = new OpenApiContact {
+                        Name = "Jonatan Gall Delgado de Souza",
+                        Email = string.Empty,
+                        Url = new Uri("https://github.com/jonatansouza"),
+                    },
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,6 +50,15 @@ namespace EFCore.WebAPI {
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
+            // start Swagger 
+            app.UseSwagger();
+            app.UseSwaggerUI(p => {
+                p.SwaggerEndpoint("/swagger/v1/swagger.json", "HeroAPI");
+                p.RoutePrefix = string.Empty;
+            });
+
+            // end Swagger
+
 
             app.UseRouting();
 
